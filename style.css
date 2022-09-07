@@ -1,0 +1,134 @@
+/*
+    1: #041C32
+    2: #04293A
+    3: #064663
+    4: #ECB365
+*/
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+html, body{
+    width: 100%;
+    height: 100%;
+}
+
+body{
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    background-color: #041C32;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 300;
+}
+
+
+header{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+
+#textarea-wrapper{
+    width: 40%;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px #000000;
+}
+
+header textarea{
+    border-radius: 10px;
+    width: 100%;
+    height: 50px;
+    background-color: #ECB365;
+    box-sizing: border-box;
+    padding: 15px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    word-wrap: break-word;
+    resize: none;
+    transition: all 200ms linear;
+}
+
+#login-wrapper{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#google-login-button{
+    height: 40px;
+    width: 250px;
+    background-color: #ECB365;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #041C32;
+    font-size: 14px;
+    flex-direction: row;
+    box-shadow: 2px 2px 5px #000000;
+    transition: all 300ms linear;
+}
+
+#google-login-button span{
+    margin-left: 10px;
+}
+
+#google-login-button:hover{
+    cursor: pointer;
+    box-shadow: 5px 5px 25px #000000;
+}
+
+footer{
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    font-size: 14px;
+    color: #ECB365;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+footer div:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 1200px) {
+    #textarea-wrapper{
+        width: 60%;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    #textarea-wrapper{
+        width: 80%;
+    }
+}
+textarea::-webkit-input-placeholder {
+    color: #041C32;
+}
+textarea:-moz-placeholder { /* Firefox 18- */
+    color: #041C32;
+}
+textarea::-moz-placeholder {  /* Firefox 19+ */
+    color: #041C32;
+}
+textarea:-ms-input-placeholder {
+    color: #041C32; 
+}
+textarea::placeholder {
+    color: #041C32;
+}
