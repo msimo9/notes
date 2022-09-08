@@ -2,9 +2,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.3/firebase
 
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut} from "https://www.gstatic.com/firebasejs/9.9.3/firebase-auth.js";
 
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, collection, addDoc, arrayUnion, arrayRemove, updateDoc } from "https://www.gstatic.com/firebasejs/9.9.3/firebase-firestore.js";
 
 let userID = ""; 
+let allNotes = [];
 
 const firebaseConfig = {
     apiKey: "AIzaSyCw6GUUtFi5VMJdbZZAgVPFPSZBv1rRR8I",
@@ -25,11 +26,24 @@ onAuthStateChanged(auth, (user) => {
     if (user) {
         const uid = user.uid;
         userID = uid;
-        renderNotes();
+        checkIfDBexist(user.uid);
     } else {
         renderLoginForm();
     }
 });
+
+const checkIfDBexist = async(uid) => {
+    const docRef = doc(db, "notes", uid.toString());
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        allNotes = docSnap.data().allNotes;
+    } else {
+        await setDoc(doc(db, "notes", uid), {allNotes: []});
+        allNotes = [];
+    }
+    renderNotes();
+}
 
 const handleUserSignup = () => {
     signInWithPopup(auth, provider)
@@ -56,6 +70,26 @@ const handleSignOut = () => {
     });
 }
 
+const handleUploadNote = async(value) => {
+    const date = new Date();
+    const uploadNoteRef = doc(db, "notes", userID);
+    await updateDoc(uploadNoteRef, {
+        allNotes: arrayUnion({text: value, id: date.getTime()})
+    });
+    checkIfDBexist(userID);
+}
+
+const handleRemoveNote = async(noteID) => {
+    allNotes = allNotes.filter( el => {
+        return el.id !== noteID
+    });
+    const removeNoteRef = doc(db, "notes", userID);
+    await updateDoc(removeNoteRef, {
+        allNotes: allNotes.reverse()
+    });
+    checkIfDBexist(userID);
+}
+
 const renderNotes = () => {
     document.body.innerHTML = "";
     const header = document.createElement("header");
@@ -69,10 +103,51 @@ const renderNotes = () => {
     });
     textArea.addEventListener("focusout", ()=>{
         textArea.style.height = "50px";
+        if(textArea.value !== "" && textArea.value.length !== 0){
+            handleUploadNote(textArea.value);
+            textArea.value = "";
+        }
     });
+    const submitButton = document.createElement("div");
+    submitButton.setAttribute("id", "submit-button");
+    submitButton.innerHTML = "<ion-icon name='send-outline'></ion-icon>";
+    submitButton.addEventListener("click", ()=>{
+        if(textArea.value !== "" && textArea.value.length !== 0){
+            handleUploadNote(textArea.value);
+            textArea.value = "";
+        }
+    });
+    textAreaWrapper.appendChild(submitButton);
+
     textAreaWrapper.appendChild(textArea);
     header.appendChild(textAreaWrapper);
     document.body.appendChild(header);
+
+    const notesWrapper = document.createElement("div");
+    notesWrapper.setAttribute("id", "notes-wrapper");
+    allNotes.reverse().forEach(note => {
+        //note container
+        const noteContainer = document.createElement("div");
+        noteContainer.setAttribute("id", "note-container");
+        noteContainer.innerText = note.text;
+        //edit buttons
+        const editButtons = document.createElement("div");
+        editButtons.setAttribute("id", "edit-buttons");
+        const removeButton = document.createElement("div");
+        removeButton.innerHTML = `<ion-icon name="trash-outline"></ion-icon>`;
+        removeButton.addEventListener("click", ()=>{handleRemoveNote(note.id)});
+        editButtons.appendChild(removeButton);
+        noteContainer.addEventListener("mouseenter", ()=>{
+            editButtons.style.display = "flex";
+        });
+        noteContainer.addEventListener("mouseleave", ()=>{
+            editButtons.style.display = "none";
+        });
+        noteContainer.appendChild(editButtons);
+        //append child
+        notesWrapper.appendChild(noteContainer);
+    });
+    document.body.appendChild(notesWrapper);
 
     const footer = document.createElement("footer");
     const signOutButton = document.createElement("div");
