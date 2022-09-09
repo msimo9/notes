@@ -85,7 +85,7 @@ header textarea{
     color: #ECB365;
     display: flex;
     flex-wrap: wrap;
-    flex-flow: row-reverse;
+    flex-flow: row wrap;
     flex-direction: row;
     float: inline-start;
 }
@@ -141,6 +141,7 @@ header textarea{
     right: 2px;
     color: #064663;
     display: none;
+    z-index: 99;
 }
 
 #edit-buttons div:hover{
@@ -189,7 +190,7 @@ header textarea{
 }
 
 footer{
-    position: absolute;
+    position: fixed;
     bottom: 10px;
     width: 100%;
     font-size: 14px;

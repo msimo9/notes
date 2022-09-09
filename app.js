@@ -133,7 +133,16 @@ const renderNotes = () => {
 
     const notesWrapper = document.createElement("div");
     notesWrapper.setAttribute("id", "notes-wrapper");
-    allNotes.reverse().forEach((note, index) => {
+    allNotes = allNotes.sort((a, b) => {
+        if ( a.id < b.id ){
+            return 1;
+          }
+          if ( a.id > b.id ){
+            return -1;
+          }
+          return 0;
+    })
+    allNotes.forEach((note, index) => {
         //note container
         const noteContainer = document.createElement("div");
         noteContainer.setAttribute("id", "note-container");
@@ -174,12 +183,19 @@ const renderNotes = () => {
                 closeFocusedNote.addEventListener("click", ()=>{
                     allNotes[index].text = editTextArea.value;
                     noteContainer.innerText = editTextArea.value;
+                    editButtons.appendChild(removeButton);
                     noteContainer.appendChild(editButtons);
                     opened = false;
                     updateNoteValue();
                     focusedNoteContainer.remove();
                 });
                 focusedNoteContainer.appendChild(closeFocusedNote);
+                const clonedRemoveButton = removeButton;
+                clonedRemoveButton.style.position = "absolute";
+                clonedRemoveButton.style.bottom = "2px";
+                clonedRemoveButton.style.right = "2px";
+                clonedRemoveButton.style.cursor = "pointer";
+                focusedNoteContainer.appendChild(clonedRemoveButton);
                 document.body.appendChild(focusedNoteContainer);
             }
         });
