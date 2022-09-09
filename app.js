@@ -6,6 +6,7 @@ import { getFirestore, doc, getDoc, setDoc, collection, addDoc, arrayUnion, arra
 
 let userID = ""; 
 let allNotes = [];
+let opened = false;
 
 const firebaseConfig = {
     apiKey: "AIzaSyCw6GUUtFi5VMJdbZZAgVPFPSZBv1rRR8I",
@@ -90,6 +91,13 @@ const handleRemoveNote = async(noteID) => {
     checkIfDBexist(userID);
 }
 
+const updateNoteValue = async() => {
+    const updateRef = doc(db, "notes", userID);
+    await updateDoc(updateRef, {
+        allNotes: allNotes
+    });
+}
+
 const renderNotes = () => {
     document.body.innerHTML = "";
     const header = document.createElement("header");
@@ -125,7 +133,7 @@ const renderNotes = () => {
 
     const notesWrapper = document.createElement("div");
     notesWrapper.setAttribute("id", "notes-wrapper");
-    allNotes.reverse().forEach(note => {
+    allNotes.reverse().forEach((note, index) => {
         //note container
         const noteContainer = document.createElement("div");
         noteContainer.setAttribute("id", "note-container");
@@ -138,13 +146,45 @@ const renderNotes = () => {
         removeButton.addEventListener("click", ()=>{handleRemoveNote(note.id)});
         editButtons.appendChild(removeButton);
         noteContainer.addEventListener("mouseenter", ()=>{
+            console.log(123);
             editButtons.style.display = "flex";
         });
         noteContainer.addEventListener("mouseleave", ()=>{
             editButtons.style.display = "none";
         });
-        noteContainer.appendChild(editButtons);
+
+        noteContainer.addEventListener("click",()=>{
+            if(!opened){
+                console.log("clicked!");
+                opened = true;
+                if(document.getElementById("focused-note-container") !== null){
+                    document.getElementById("focused-note-container").remove();
+                }
+                const focusedNoteContainer = document.createElement("div");
+                focusedNoteContainer.setAttribute("id", "focused-note-container");
+                focusedNoteContainer.innerHTML = "";
+                const editTextArea = document.createElement("textarea");
+                editTextArea.setAttribute("id", "edit-text-area");
+                editTextArea.value = note.text;
+                editTextArea.focus();
+                focusedNoteContainer.appendChild(editTextArea);
+                const closeFocusedNote = document.createElement("div");
+                closeFocusedNote.setAttribute("id", "close-focused-note");
+                closeFocusedNote.innerHTML = "<ion-icon name='close-outline'></ion-icon>";
+                closeFocusedNote.addEventListener("click", ()=>{
+                    allNotes[index].text = editTextArea.value;
+                    noteContainer.innerText = editTextArea.value;
+                    noteContainer.appendChild(editButtons);
+                    opened = false;
+                    updateNoteValue();
+                    focusedNoteContainer.remove();
+                });
+                focusedNoteContainer.appendChild(closeFocusedNote);
+                document.body.appendChild(focusedNoteContainer);
+            }
+        });
         //append child
+        noteContainer.appendChild(editButtons);
         notesWrapper.appendChild(noteContainer);
     });
     document.body.appendChild(notesWrapper);

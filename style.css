@@ -82,10 +82,12 @@ header textarea{
     width: 100%;
     height: fit-content;
     padding: 30px 60px;
-    flex-wrap: wrap;
     color: #ECB365;
     display: flex;
+    flex-wrap: wrap;
+    flex-flow: row-reverse;
     flex-direction: row;
+    float: inline-start;
 }
 
 #note-container{
@@ -100,9 +102,42 @@ header textarea{
     box-shadow: 3px 3px 15px #000000;
 }
 
-#edit-buttons{
+#focused-note-container{
+    transform: translate(-50%, -50%);
+    color: #041C32;
+    padding: 15px;
+    background-color: #ECB365;
+    font-size: 12px;
+    position: fixed;
+    box-shadow: 5px 5px 150px #000000;
+    top: 50%;
+    left: 50%;
+    height: 50%;
+    width: 50%;
+    animation: slide-down 300ms linear;
+}
+@keyframes slide-down {
+    from{
+        left: -50%;
+    }
+    to{
+        left: 50%;
+    }
+}
+
+#close-focused-note{
     position: absolute;
     top: 2px;
+    right: 2px;
+}
+
+#close-focused-note:hover{
+    cursor: pointer;
+}
+
+#edit-buttons{
+    position: absolute;
+    bottom: 2px;
     right: 2px;
     color: #064663;
     display: none;
@@ -110,6 +145,14 @@ header textarea{
 
 #edit-buttons div:hover{
     cursor: pointer;
+}
+
+#edit-text-area{
+    width: 100%;
+    height: 100%;
+    background-color: #ECB365;
+    border: none;
+    resize: none;
 }
 
 #login-wrapper{
